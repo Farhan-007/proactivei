@@ -93,6 +93,7 @@ export default function BookingModal({ isOpen, onClose, bookingItem }) {
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log("data", data);
         setLoading(false);
         if (data && data.success) {
           // Use GAS-generated ticketId (source of truth in sheet)
