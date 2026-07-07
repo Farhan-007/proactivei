@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Search, Menu, X, Sparkles, User, Settings, Eye } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Search, Menu, X, Sparkles } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [exploreDropdownOpen, setExploreDropdownOpen] = useState(false);
   const pathname = usePathname();
-  const router = useRouter();
 
   const currentPage = pathname === '/' ? 'home' : pathname.replace(/^\//, '');
 
@@ -23,7 +23,8 @@ export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
     { id: 'learning-hub', label: 'Learning Hub' },
     { id: 'resources', label: 'Resources' },
     { id: 'community', label: 'Community' },
-    { id: 'success-stories', label: 'Impact' }
+    { id: 'success-stories', label: 'Impact' },
+    { id: 'media', label: 'Media' }
   ];
 
   const rightLinks = [
@@ -31,13 +32,7 @@ export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
     { id: 'contact', label: 'Contact' }
   ];
 
-  const handleNavClick = (pageId) => {
-    setMobileMenuOpen(false);
-    router.push(pageId === 'home' ? '/' : `/${pageId}`);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-
+  const getHref = (pageId) => pageId === 'home' ? '/' : `/${pageId}`;
 
   return (
     <nav className="glass-panel" style={{
@@ -59,13 +54,13 @@ export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
         position: 'relative'
       }}>
         {/* Logo */}
-        <div 
-          onClick={() => handleNavClick('home')}
+        <Link
+          href="/"
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            cursor: 'pointer'
+            textDecoration: 'none'
           }}
         >
           <div style={{
@@ -79,9 +74,9 @@ export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
             overflow: 'hidden',
             boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
           }}>
-            <img 
-              src="/logo.png" 
-              alt="Proactive I Logo" 
+            <img
+              src="/logo.png"
+              alt="Proactive I Logo"
               style={{
                 width: '100%',
                 height: '100%',
@@ -100,7 +95,7 @@ export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
           }}>
             PROACTIVE I
           </span>
-        </div>
+        </Link>
 
         {/* Desktop Navigation Links */}
         <div className="desktop-only" style={{
@@ -109,9 +104,9 @@ export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
           gap: '1.25rem'
         }}>
           {navLinks.map((link) => (
-            <button
+            <Link
               key={link.id}
-              onClick={() => handleNavClick(link.id)}
+              href={getHref(link.id)}
               style={{
                 background: 'none',
                 border: 'none',
@@ -121,7 +116,9 @@ export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
                 cursor: 'pointer',
                 transition: 'var(--transition-fast)',
                 padding: '0.5rem 0.25rem',
-                position: 'relative'
+                position: 'relative',
+                textDecoration: 'none',
+                display: 'inline-block'
               }}
             >
               {link.label}
@@ -136,11 +133,11 @@ export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
                   borderRadius: '9999px'
                 }} />
               )}
-            </button>
+            </Link>
           ))}
 
           {/* Custom Explore Dropdown Menu */}
-          <div 
+          <div
             style={{ position: 'relative' }}
             onMouseEnter={() => setExploreDropdownOpen(true)}
             onMouseLeave={() => setExploreDropdownOpen(false)}
@@ -165,7 +162,7 @@ export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
             </button>
 
             {exploreDropdownOpen && (
-              <div 
+              <div
                 className="glass-panel"
                 style={{
                   position: 'absolute',
@@ -184,12 +181,10 @@ export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
                 }}
               >
                 {exploreLinks.map((item) => (
-                  <button
+                  <Link
                     key={item.id}
-                    onClick={() => {
-                      handleNavClick(item.id);
-                      setExploreDropdownOpen(false);
-                    }}
+                    href={getHref(item.id)}
+                    onClick={() => setExploreDropdownOpen(false)}
                     style={{
                       background: currentPage === item.id ? 'var(--accent-glow)' : 'transparent',
                       border: 'none',
@@ -200,6 +195,8 @@ export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
                       cursor: 'pointer',
                       textAlign: 'left',
                       width: '100%',
+                      textDecoration: 'none',
+                      display: 'block',
                       transition: 'var(--transition-fast)'
                     }}
                     onMouseEnter={(e) => {
@@ -214,16 +211,16 @@ export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
                     }}
                   >
                     {item.label}
-                  </button>
+                  </Link>
                 ))}
               </div>
             )}
           </div>
 
           {rightLinks.map((link) => (
-            <button
+            <Link
               key={link.id}
-              onClick={() => handleNavClick(link.id)}
+              href={getHref(link.id)}
               style={{
                 background: 'none',
                 border: 'none',
@@ -233,7 +230,9 @@ export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
                 cursor: 'pointer',
                 transition: 'var(--transition-fast)',
                 padding: '0.5rem 0.25rem',
-                position: 'relative'
+                position: 'relative',
+                textDecoration: 'none',
+                display: 'inline-block'
               }}
             >
               {link.label}
@@ -248,11 +247,11 @@ export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
                   borderRadius: '9999px'
                 }} />
               )}
-            </button>
+            </Link>
           ))}
         </div>
 
-        {/* Actions (Search, Creator Space Toggle, Mobile Burger) */}
+        {/* Actions (Search, Mobile Burger) */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
@@ -278,22 +277,23 @@ export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
             <Search size={18} />
           </button>
 
-          {/* Simulated CMS Trigger Button
-          <button
-            onClick={() => setCreatorMode(!creatorMode)}
-            className={`btn btn-sm ${creatorMode ? 'btn-primary' : 'btn-secondary'}`}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              border: creatorMode ? 'none' : '1px solid rgba(249, 115, 22, 0.4)',
-              boxShadow: creatorMode ? '0 0 15px rgba(249, 115, 22, 0.3)' : 'none'
-            }}
-          >
-            <Sparkles size={14} color={creatorMode ? '#000' : 'var(--accent-orange)'} />
-            <span className="desktop-only">{creatorMode ? 'Creator Studio (Active)' : 'Creator Space'}</span>
-          </button>
-          */}
+          {/* Simulated CMS Trigger Button (hidden) */}
+          {false && (
+            <button
+              onClick={() => setCreatorMode(!creatorMode)}
+              className={`btn btn-sm ${creatorMode ? 'btn-primary' : 'btn-secondary'}`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                border: creatorMode ? 'none' : '1px solid rgba(249, 115, 22, 0.4)',
+                boxShadow: creatorMode ? '0 0 15px rgba(249, 115, 22, 0.3)' : 'none'
+              }}
+            >
+              <Sparkles size={14} color={creatorMode ? '#000' : 'var(--accent-orange)'} />
+              <span className="desktop-only">{creatorMode ? 'Creator Studio (Active)' : 'Creator Space'}</span>
+            </button>
+          )}
 
           {/* Mobile Menu Toggle */}
           <button
@@ -316,7 +316,7 @@ export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
 
       {/* Mobile Navigation Menu Dropdown */}
       {mobileMenuOpen && (
-        <div 
+        <div
           className="glass-panel"
           style={{
             position: 'absolute',
@@ -334,9 +334,10 @@ export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
           }}
         >
           {[...navLinks, ...exploreLinks, ...rightLinks].map((link) => (
-            <button
+            <Link
               key={link.id}
-              onClick={() => handleNavClick(link.id)}
+              href={getHref(link.id)}
+              onClick={() => setMobileMenuOpen(false)}
               style={{
                 background: 'none',
                 border: 'none',
@@ -347,11 +348,13 @@ export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
                 textAlign: 'left',
                 padding: '0.5rem 0.25rem',
                 borderBottom: '1px solid rgba(255,255,255,0.05)',
+                textDecoration: 'none',
+                display: 'block',
                 transition: 'var(--transition-fast)'
               }}
             >
               {link.label}
-            </button>
+            </Link>
           ))}
         </div>
       )}

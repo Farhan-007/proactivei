@@ -9,12 +9,14 @@ export default function HomePage() {
   const router = useRouter();
   const { programs, events, setSelectedBookingItem, setIsBookingOpen } = useApp();
 
+  // Used by Home view's internal CTA buttons (e.g., "View All Programs")
   const handleSetCurrentPage = (pageId) => {
     router.push(pageId === 'home' ? '/' : `/${pageId}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <Home 
+    <Home
       programs={programs}
       events={events}
       setCurrentPage={handleSetCurrentPage}
