@@ -92,8 +92,6 @@ export default function BookingModal({ isOpen, onClose, bookingItem }) {
         setLoading(false);
         if (data && data.success) {
           // Use GAS-generated ticketId (source of truth in sheet)
-          registered.push(normalizedPhone);
-          localStorage.setItem("proactivei_registered", JSON.stringify(registered));
           setTicketId(data.ticketId || payload.ticketId);
           setStep(3);
         } else {
