@@ -66,11 +66,11 @@ export default function BookingModal({ isOpen, onClose, bookingItem }) {
 
     const sheetUrl = "https://script.google.com/macros/s/AKfycbxVOBebB5dl4zQUvUhOJcyeSm8wDKzLXpIVIPI1XLxsUiosnmMXXlnGJxp9Q8WiByo-/exec";
 
-    // Normalize phone: strip non-digits, remove leading 91 if 12 digits
+    // Normalize phone to match GAS cleanPhone logic
     const rawPhone = formData.phone || "";
     const normalizedPhone = rawPhone.replace(/\D/g, "").replace(/^91(\d{10})$/, "$1");
 
-    // Client-side duplicate check via localStorage
+    // Fast local duplicate check (same browser)
     const registered = JSON.parse(localStorage.getItem("proactivei_registered") || "[]");
     if (registered.includes(normalizedPhone)) {
       setErrorMsg("This phone number is already registered.");
@@ -83,32 +83,29 @@ export default function BookingModal({ isOpen, onClose, bookingItem }) {
       phone: normalizedPhone,
       email: formData.email || "",
       source: formData.source || "",
-      // ticketId: localTicketId(),
+      ticketId: localTicketId(),
     };
-
-    // no-cors POST: GAS receives and stores the data even though
-    // we can't read the response. Duplicate check is handled above.
-    console.log("payload:", payload);
 
     fetch(sheetUrl, {
       method: "POST",
-      // mode: "no-cors",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify(payload),
     })
-      .then((response) => {
-        console.log("response:", response);
-
-        // Mark this phone as registered in localStorage
-        registered.push(normalizedPhone);
-        localStorage.setItem("proactivei_registered", JSON.stringify(registered));
-
-        setTicketId(payload.ticketId);
+      .then((response) => response.json())
+      .then((data) => {
         setLoading(false);
-        setStep(3);
+        if (data && data.success) {
+          // Use GAS-generated ticketId (source of truth in sheet)
+          registered.push(normalizedPhone);
+          localStorage.setItem("proactivei_registered", JSON.stringify(registered));
+          setTicketId(data.ticketId || payload.ticketId);
+          setStep(3);
+        } else {
+          // GAS rejected — e.g. duplicate phone from another device
+          setErrorMsg(data?.message || "Registration failed. Please try again.");
+        }
       })
-      .catch((error) => {
-        console.error("error:", error);
+      .catch(() => {
         setErrorMsg("A network error occurred. Please check your connection and try again.");
         setLoading(false);
       });
