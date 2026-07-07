@@ -70,14 +70,6 @@ export default function BookingModal({ isOpen, onClose, bookingItem }) {
     const rawPhone = formData.phone || "";
     const normalizedPhone = rawPhone.replace(/\D/g, "").replace(/^91(\d{10})$/, "$1");
 
-    // Fast local duplicate check (same browser)
-    const registered = JSON.parse(localStorage.getItem("proactivei_registered") || "[]");
-    if (registered.includes(normalizedPhone)) {
-      setErrorMsg("This phone number is already registered.");
-      setLoading(false);
-      return;
-    }
-
     const payload = {
       name: formData.name.trim(),
       phone: normalizedPhone,
@@ -88,10 +80,13 @@ export default function BookingModal({ isOpen, onClose, bookingItem }) {
 
     fetch(sheetUrl, {
       method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        console.log(response);
+        return response.json()
+      })
       .then((data) => {
         console.log("data", data);
         setLoading(false);
