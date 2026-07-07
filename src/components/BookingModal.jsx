@@ -64,8 +64,6 @@ export default function BookingModal({ isOpen, onClose, bookingItem }) {
     setLoading(true);
     setErrorMsg('');
 
-    const sheetUrl = "https://script.google.com/macros/s/AKfycbxVOBebB5dl4zQUvUhOJcyeSm8wDKzLXpIVIPI1XLxsUiosnmMXXlnGJxp9Q8WiByo-/exec";
-
     // Normalize phone to match GAS cleanPhone logic
     const rawPhone = formData.phone || "";
     const normalizedPhone = rawPhone.replace(/\D/g, "").replace(/^91(\d{10})$/, "$1");
@@ -78,17 +76,13 @@ export default function BookingModal({ isOpen, onClose, bookingItem }) {
       ticketId: localTicketId(),
     };
 
-    fetch(sheetUrl, {
+    fetch("/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     })
-      .then((response) => {
-        console.log(response);
-        return response.json()
-      })
+      .then((response) => response.json())
       .then((data) => {
-        console.log("data", data);
         setLoading(false);
         if (data && data.success) {
           // Use GAS-generated ticketId (source of truth in sheet)

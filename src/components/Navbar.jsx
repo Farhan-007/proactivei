@@ -1,9 +1,16 @@
+"use client";
+
 import React, { useState } from 'react';
 import { Search, Menu, X, Sparkles, User, Settings, Eye } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
 
-export default function Navbar({ currentPage, setCurrentPage, onSearchClick, creatorMode, setCreatorMode }) {
+export default function Navbar({ onSearchClick, creatorMode, setCreatorMode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [exploreDropdownOpen, setExploreDropdownOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const currentPage = pathname === '/' ? 'home' : pathname.replace(/^\//, '');
 
   const navLinks = [
     { id: 'home', label: 'Home' },
@@ -25,10 +32,11 @@ export default function Navbar({ currentPage, setCurrentPage, onSearchClick, cre
   ];
 
   const handleNavClick = (pageId) => {
-    setCurrentPage(pageId);
     setMobileMenuOpen(false);
+    router.push(pageId === 'home' ? '/' : `/${pageId}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
 
 
   return (
@@ -270,7 +278,7 @@ export default function Navbar({ currentPage, setCurrentPage, onSearchClick, cre
             <Search size={18} />
           </button>
 
-          {/* Simulated CMS Trigger Button */}
+          {/* Simulated CMS Trigger Button
           <button
             onClick={() => setCreatorMode(!creatorMode)}
             className={`btn btn-sm ${creatorMode ? 'btn-primary' : 'btn-secondary'}`}
@@ -285,6 +293,7 @@ export default function Navbar({ currentPage, setCurrentPage, onSearchClick, cre
             <Sparkles size={14} color={creatorMode ? '#000' : 'var(--accent-orange)'} />
             <span className="desktop-only">{creatorMode ? 'Creator Studio (Active)' : 'Creator Space'}</span>
           </button>
+          */}
 
           {/* Mobile Menu Toggle */}
           <button

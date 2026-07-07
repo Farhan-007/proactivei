@@ -1,9 +1,13 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, BookOpen, Calendar, Box, FileText, ArrowRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
-export default function SearchModal({ isOpen, onClose, data, setCurrentPage, setSelectedItem }) {
+export default function SearchModal({ isOpen, onClose, data, setSelectedItem }) {
   const [query, setQuery] = useState('');
   const inputRef = useRef(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (isOpen) {
@@ -43,13 +47,14 @@ export default function SearchModal({ isOpen, onClose, data, setCurrentPage, set
   const totalResults = filteredPrograms.length + filteredEvents.length + filteredArticles.length + filteredResources.length;
 
   const handleItemClick = (pageId, item) => {
-    setCurrentPage(pageId);
+    router.push(pageId === 'home' ? '/' : `/${pageId}`);
     if (setSelectedItem) {
       setSelectedItem(item);
     }
     onClose();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
 
   return (
     <div style={{

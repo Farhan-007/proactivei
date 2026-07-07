@@ -1,9 +1,13 @@
+"use client";
+
 import React, { useState } from 'react';
 import { Mail, Send, CheckCircle2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
-export default function Footer({ setCurrentPage }) {
+export default function Footer() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const router = useRouter();
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -15,9 +19,10 @@ export default function Footer({ setCurrentPage }) {
   };
 
   const handleNav = (pageId) => {
-    setCurrentPage(pageId);
+    router.push(pageId === 'home' ? '/' : `/${pageId}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
 
   return (
     <footer style={{
